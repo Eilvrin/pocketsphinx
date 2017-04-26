@@ -14,7 +14,7 @@ from std_srvs.srv import *
 import os
 import commands
 
-class ASRControl(object):
+class recognizer(object):
 
     def __init__(self):
 
@@ -23,7 +23,7 @@ class ASRControl(object):
         self.msg = Twist()
 
         # Start node
-        rospy.init_node("asr_control")
+        rospy.init_node("recognizer")
         rospy.on_shutdown(self.shutdown)
 
         self._lm_param = "~lm"
@@ -31,7 +31,7 @@ class ASRControl(object):
         self._kws_param = "~kws"
 
         # you may need to change publisher destination depending on what you run
-        self.pub_ = rospy.Publisher("voice_data", Twist, queue_size=10)
+        self.pub_ = rospy.Publisher('~output', String, queue_size=1)
 
         if rospy.has_param(self._lm_param):
             self.lm = rospy.get_param(self._lm_param)
@@ -81,6 +81,7 @@ class ASRControl(object):
         self.decoder.start_utt()
         rospy.loginfo("Done starting the decoder")
 
+        # Main loop
         while not rospy.is_shutdown():
             # taken as is from python wrapper
             buf = stream.read(1024)
@@ -88,64 +89,28 @@ class ASRControl(object):
                 self.decoder.process_raw(buf, False, False)
             else:
                 break
-            self.parse_asr_result()
+            self.publish_result()
 
-    def parse_asr_result(self):
+    def publish_result(self):
         """
-        move the robot based on ASR hypothesis
+        Publish the words
         """
         if self.decoder.hyp() != None:
-            print ([(seg.word, seg.prob, seg.start_frame, seg.end_frame)
+            print ([(seg.word)
                 for seg in self.decoder.seg()])
-            print ("Detected keyphrase, restarting search")
             seg.word = seg.word.lower()
             self.decoder.end_utt()
             self.decoder.start_utt()
-            # you may want to modify the main logic here
-            if seg.word.find("full speed") > -1:
-                if self.speed == 0.2:
-                    self.msg.linear.x = self.msg.linear.x*2
-                    self.msg.angular.z = self.msg.angular.z*2
-                    self.speed = 0.4
-            if seg.word.find("half speed") > -1:
-                if self.speed == 0.4:
-                    self.msg.linear.x = self.msg.linear.x/2
-                    self.msg.angular.z = self.msg.angular.z/2
-                    self.speed = 0.2
-            if seg.word.find("forward") > -1:
-                self.msg.linear.x = self.speed
-                self.msg.angular.z = 0
-            elif seg.word.find("left") > -1:
-                if self.msg.linear.x != 0:
-                    if self.msg.angular.z < self.speed:
-                        self.msg.angular.z += 0.05
-                else:
-                    self.msg.angular.z = self.speed*2
-            elif seg.word.find("right") > -1:
-                if self.msg.linear.x != 0:
-                    if self.msg.angular.z > -self.speed:
-                        self.msg.angular.z -= 0.05
-                else:
-                    self.msg.angular.z = -self.speed*2
-            elif seg.word.find("back") > -1:
-                self.msg.linear.x = -self.speed
-                self.msg.angular.z = 0
-            elif seg.word.find("stop") > -1 or seg.word.find("halt") > -1:
-                self.msg = Twist()
-
-        self.pub_.publish(self.msg)
+            self.pub_.publish(seg.word)
 
     def shutdown(self):
         """
         command executed after Ctrl+C is pressed
         """
-        rospy.loginfo("Stop ASRControl")
-        self.pub_.publish(Twist())
-        rospy.sleep(1)
-
+        rospy.loginfo("Stopping PocketSphinx")
 
 
 if __name__ == "__main__":
     if len(sys.argv) > 0:
-        start = ASRControl()
+        start = recognizer()
 

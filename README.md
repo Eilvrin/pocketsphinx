@@ -18,7 +18,6 @@ Current repository is a ROS wrapper which incorporates those features.
     ```
 
 ## Usage
-3) Use the following command to start the required node: (Also add the 2 arguments) 
 ``` 
 roslaunch pocketsphinx pocketsphinx.launch
 ```

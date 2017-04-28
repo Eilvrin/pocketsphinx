@@ -10,6 +10,7 @@ Current repository is a ROS wrapper which incorporates those features.
 ## Dependencies  
 1) pyaudio  
     ```
+    sudo apt-get install -y python python-dev python-pip build-essential swig libpulse-dev git
     sudo apt-get install python-pyaudio
     ```
 

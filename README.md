@@ -12,6 +12,10 @@ Current repository is a ROS wrapper which incorporates those features.
     ```
     sudo pip install pyaudio
     ```
+or
+    ```
+    sudo apt-get install python-pyaudio
+    ```
 2) pocketsphinx: You will need to have pip preinstalled for this to work
     ```
     sudo pip install pocketsphinx

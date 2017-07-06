@@ -7,7 +7,7 @@ It uses up-to-date pocketsphinx features and is independent of most external dep
   
 Current repository is a ROS wrapper which incorporates those features. 
   
-## Dependencies  
+## Installation 
 1)   
     ```
     sudo apt-get install -y python python-dev python-pip build-essential swig libpulse-dev git
@@ -18,6 +18,7 @@ Current repository is a ROS wrapper which incorporates those features.
     ```
     sudo pip install pocketsphinx
     ```
+3) Download and copy the hub4wsj_sc_8k language model  to /usr/share/pocketsphinx/model/hmm/en_US/. It can be found here: https://sourceforge.net/projects/cmusphinx/files/Acoustic and Language Models/Archive/US English HUB4WSJ Acoustic Model/
 
 ## Usage
 ``` 

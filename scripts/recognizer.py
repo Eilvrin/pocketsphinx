@@ -37,7 +37,7 @@ class recognizer(object):
             self.lm = rospy.get_param(self._lm_param)
         else:
             rospy.loginfo("Loading the default acoustic model")
-            self.lm = "/usr/share/pocketsphinx/model/hmm/en_US/hub4wsj_sc_8k"
+            self.lm = "/home/kutkina/catkin_ws/src/pocketsphinx/vocab/cmusphinx-de-voxforge-5.2"
             rospy.loginfo("Done loading the default acoustic model")
 
         if rospy.has_param(self._dict_param):
